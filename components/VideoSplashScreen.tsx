@@ -14,7 +14,7 @@ export const VideoSplashScreen: React.FC<VideoSplashScreenProps> = ({ onVideoEnd
         onEnded={onVideoEnd}
         className="w-full h-full object-cover"
       >
-        <source src="A2.mp4" type="video/mp4" />
+        <source src="A3.mp4" type="video/mp4" />
         Your browser does not support the video tag. An intro video was meant to play here.
       </video>
     </div>
