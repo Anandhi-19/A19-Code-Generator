@@ -1,0 +1,5 @@
+{
+  "name": "A19 AI Web Developer",
+  "description": "An AI-powered assistant that generates complete, single-file websites from a text description, providing live previews and code.",
+  "requestFramePermissions": []
+}
