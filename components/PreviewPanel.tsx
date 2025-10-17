@@ -1,4 +1,3 @@
-// Fix: Implement the PreviewPanel component to display code and a live preview.
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { WebsiteCode } from '../services/geminiService';
 import { PreviewIcon } from './icons/PreviewIcon';
@@ -14,6 +13,10 @@ import { TabletIcon } from './icons/TabletIcon';
 import { MobileIcon } from './icons/MobileIcon';
 import JSZip from 'jszip';
 import saveAs from 'file-saver';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-markup';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-javascript';
 
 interface PreviewPanelProps {
   code: WebsiteCode | null;
@@ -41,10 +44,16 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({ code, isLoading }) =
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'preview' && code) {
+      const timer = setTimeout(() => Prism.highlightAll(), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, code]);
   
   const srcDoc = useMemo(() => {
     if (!code) return '';
-    // Fix: Ensure correct script and style linking for the iframe preview
     return `
       <html>
         <head>
@@ -125,10 +134,11 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({ code, isLoading }) =
         </div>
       );
     } else {
-      const content = codeContent[activeTab as keyof typeof codeContent];
+      const content = codeContent[activeTab as keyof typeof codeContent] || '';
+      const language = activeTab === 'javascript' ? 'js' : activeTab;
       return (
-        <div className="relative h-full">
-            <pre className="h-full overflow-auto p-4 bg-gray-900/50 text-sm"><code className={`language-${activeTab}`}>{content}</code></pre>
+        <div className="relative h-full text-sm">
+            <pre className="h-full w-full overflow-auto p-4 bg-gray-900/50 !text-sm"><code className={`language-${language}`}>{content}</code></pre>
             <button 
                 onClick={() => handleCopy(content)}
                 className="absolute top-2 right-2 p-2 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors"
